@@ -9,8 +9,8 @@ POST http://127.0.0.1:8000/funcionario/ HTTP/1.1
 content-type: application/json
 
 {
-    "nome" : "Luciano Coelho",
-    "matricula" : "lu12353",
+    "nome" : "Gustavo Vieira Walter",
+    "matricula" : "gustavosenha",
     "cpf" : "1",
     "telefone" : "tel2383738",
     "grupo" : 1,
@@ -22,8 +22,8 @@ PUT http://127.0.0.1:8000/funcionario/2 HTTP/1.1
 content-type: application/json
 
 {
-    "nome" : "Luciano Coelho",
-    "matricula" : "lu12353",
+    "nome" : "Gustavo Vieira Walter",
+    "matricula" : "gustavosenha",
     "cpf" : "1",
     "telefone" : "tel2383738",
     "grupo" : 1,
