@@ -6,3 +6,4 @@ class Produto(BaseModel):
     preco: float
     foto: bytes
     descricao: str = None
+#Gustavo Vieira Walter

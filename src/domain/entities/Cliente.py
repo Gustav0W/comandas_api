@@ -5,3 +5,4 @@ class Cliente(BaseModel):
     nome: str
     cpf: str
     telefone: str
+#Gustavo Vieira Walter

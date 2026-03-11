@@ -22,3 +22,4 @@ def put_produto(id: int, corpo: Produto):
 @router.delete("/produto/{id}", tags=["Produto"], status_code=200)
 def delete_produto(id: int):
     return {"msg": "produto delete executado", "id": id}
+#Gustavo Vieira Walter

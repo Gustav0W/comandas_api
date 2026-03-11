@@ -21,3 +21,4 @@ def put_funcionario(id: int, corpo: Funcionario):
 @router.delete("/funcionario/{id}", tags=["Funcionário"], status_code=200)
 def delete_funcionario(id: int):
     return {"msg": "funcionario delete executado", "id":id}
+#Gustavo Vieira Walter
