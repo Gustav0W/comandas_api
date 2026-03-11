@@ -1,0 +1,31 @@
+### Teste dos endpoints de Produto
+
+GET http://127.0.0.1:8000/produto/
+
+###
+GET http://127.0.0.1:8000/produto/1
+
+###
+POST http://127.0.0.1:8000/produto/
+Content-Type: application/json
+
+{
+  "nome": "Coxinha",
+  "preco": 7.5,
+  "foto": "dGVzdGU=",
+  "descricao": "Coxinha de frango com catupiry"
+}
+
+###
+PUT http://127.0.0.1:8000/produto/1
+Content-Type: application/json
+
+{
+  "nome": "Coxinha",
+  "preco": 8.0,
+  "foto": "dGVzdGU=",
+  "descricao": "Coxinha de frango acompanhado de Coca Mini Lata (atualizada)"
+}
+
+###
+DELETE http://127.0.0.1:8000/produto/1

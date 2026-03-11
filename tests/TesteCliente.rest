@@ -1,0 +1,29 @@
+### Teste dos endpoints de Cliente
+
+GET http://127.0.0.1:8000/cliente/
+
+###
+GET http://127.0.0.1:8000/cliente/1
+
+###
+POST http://127.0.0.1:8000/cliente/
+Content-Type: application/json
+
+{
+  "nome": "Gustavo Walter",
+  "cpf": "12345678900",
+  "telefone": "11999999999"
+}
+
+###
+PUT http://127.0.0.1:8000/cliente/1
+Content-Type: application/json
+
+{
+  "nome": "Gustavo Walter",
+  "cpf": "12345678900",
+  "telefone": "11999999999"
+}
+
+###
+DELETE http://127.0.0.1:8000/cliente/1
