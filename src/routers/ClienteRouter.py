@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from src.domain.entities.Cliente import Cliente
+from src.domain.schemas.ClienteSchema import ClienteCreate, ClienteUpdate, ClienteResponse
 router = APIRouter()
 
 @router.get("/cliente/", tags=["Cliente"], status_code=200)

@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from domain.schemas.FuncionarioSchema import (   
+from src.domain.schemas.FuncionarioSchema import (   
     FuncionarioCreate, 
     FuncionarioUpdate, 
     FuncionarioResponse
 )
 
-from infra.orm.FuncionarioModel import FuncionarioDB
-from infra.database import get_db
+from src.infra.orm.FuncionarioModel import FuncionarioDB
+from src.infra.database import get_db
 
 router = APIRouter()
 

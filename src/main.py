@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from src.settings import HOST, PORT, RELOAD
 import uvicorn
 
-from routers import FuncionarioRouter, ClienteRouter, ProdutoRouter
+from src.routers import FuncionarioRouter, ClienteRouter, ProdutoRouter
 
-from infra import database
+from src.infra import database
 from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):

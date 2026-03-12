@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from src.domain.entities.Produto import Produto
+from src.domain.schemas.ProdutoSchema import ProdutoCreate, ProdutoUpdate, ProdutoResponse
 
 router = APIRouter()
 
