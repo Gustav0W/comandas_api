@@ -1,5 +1,5 @@
 from src.infra import database
-from sqlalchemy import Column, VARCHAR, Integer, Float, LargeBinary
+from sqlalchemy import BLOB, Column, VARCHAR, Integer, Float, BLOB
 
 class ProdutoDB(database.Base):
     __tablename__ = 'tb_produto'
@@ -7,7 +7,7 @@ class ProdutoDB(database.Base):
     id_produto = Column(Integer, primary_key=True, autoincrement=True, index=True)
     nome = Column(VARCHAR(100), nullable=False)
     preco = Column(Float, nullable=False)
-    foto = Column(LargeBinary, nullable=True)
+    foto = Column(BLOB, nullable=True)
     descricao = Column(VARCHAR(255), nullable=True)
 
     def __init__(self, id_produto, nome, preco, foto, descricao=None):
