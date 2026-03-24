@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from src.settings import HOST, PORT, RELOAD
 import uvicorn
 
+from src.infra.database import cria_tabelas
 from src.routers import FuncionarioRouter, ClienteRouter, ProdutoRouter
 
 from src.infra import database
