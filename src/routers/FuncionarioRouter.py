@@ -1,3 +1,4 @@
+from infra.security import get_password_hash
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -56,15 +57,15 @@ async def post_funcionario(funcionario_data: FuncionarioCreate, db: Session = De
                 detail="Já existe um funcionário com este CPF"
             )
         
-        # Cria o novo funcionário
+    
         novo_funcionario = FuncionarioDB(
-            id=None, # Será auto-incrementado
+            id=None,
             nome=funcionario_data.nome,
             matricula=funcionario_data.matricula,
             cpf=funcionario_data.cpf,
             telefone=funcionario_data.telefone,
             grupo=funcionario_data.grupo,
-            senha=funcionario_data.senha
+            senha=get_password_hash(funcionario_data.senha)
         )
 
         db.add(novo_funcionario)
@@ -101,6 +102,9 @@ async def put_funcionario(id: int, funcionario_data: FuncionarioUpdate, db: Sess
                     status_code=status.HTTP_400_BAD_REQUEST, detail="Já existe um funcionário com este CPF"
                 )
 
+        if funcionario_data.senha:
+            funcionario_data.senha = get_password_hash(funcionario_data.senha)
+            
         # Atualiza apenas os campos fornecidos
         update_data = funcionario_data.model_dump(exclude_unset=True)
     
