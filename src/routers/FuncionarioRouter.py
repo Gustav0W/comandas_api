@@ -1,4 +1,4 @@
-from infra.security import get_password_hash
+from src.infra.security import get_password_hash
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -104,7 +104,7 @@ async def put_funcionario(id: int, funcionario_data: FuncionarioUpdate, db: Sess
 
         if funcionario_data.senha:
             funcionario_data.senha = get_password_hash(funcionario_data.senha)
-            
+
         # Atualiza apenas os campos fornecidos
         update_data = funcionario_data.model_dump(exclude_unset=True)
     
