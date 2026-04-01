@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from src.settings import HOST, PORT, RELOAD
 import uvicorn
 
-from src.routers import FuncionarioRouter, ClienteRouter, ProdutoRouter
+#import das classes
+from src.routers import AuthRouter, FuncionarioRouter, ClienteRouter, ProdutoRouter
 
 from src.infra import database
 from contextlib import asynccontextmanager
@@ -22,6 +23,7 @@ app = FastAPI(lifespan = lifespan)
 async def root():
     return {"detail":"API Pastelaria", "Swagger UI": "http://127.0.0.1:8000/docs", "ReDoc": "http://127.0.0.1:8000/redoc" }
 
+app.include_router(AuthRouter.router)
 app.include_router(FuncionarioRouter.router)
 app.include_router(ClienteRouter.router)
 app.include_router(ProdutoRouter.router)
