@@ -8,7 +8,7 @@ load_dotenv(dotenv_file)
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = os.getenv("PORT", "8000")
 RELOAD = os.getenv("RELOAD", True)
-
+#Gustavo Vieira Walter
 DB_SGDB = os.getenv("DB_SGDB")
 DB_NAME = os.getenv("DB_NAME")
 

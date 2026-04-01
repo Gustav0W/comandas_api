@@ -1,3 +1,20 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+
+from src.domain.schemas.ProdutoSchema import (
+    ProdutoCreate,
+    ProdutoUpdate,
+    ProdutoResponse
+)
+from src.infra.orm.ProdutoModel import ProdutoDB
+from src.infra.database import get_db
+from src.infra.dependencies import get_current_active_user, require_group
+from src.domain.schemas.AuthSchema import FuncionarioAuth
+
+router = APIRouter()
+
+# ROTA PÚBLICA DE PRODUTO
 @router.get("/produto-publico/", response_model=List[ProdutoResponse], tags=["Produto"])
 async def get_produto_publico(db: Session = Depends(get_db)):
     """Retorna todos os produtos (rota pública, sem id e valor)"""
