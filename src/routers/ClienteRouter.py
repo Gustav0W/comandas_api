@@ -1,3 +1,4 @@
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -9,11 +10,16 @@ from src.domain.schemas.ClienteSchema import (
 )
 from src.infra.orm.ClienteModel import ClienteDB
 from src.infra.database import get_db
+from src.infra.dependencies import get_current_active_user
+from src.domain.schemas.AuthSchema import FuncionarioAuth
 
 router = APIRouter()
 
 @router.get("/cliente/", response_model=List[ClienteResponse], tags=["Cliente"], status_code=status.HTTP_200_OK)
-async def get_cliente(db: Session = Depends(get_db)):
+async def get_cliente(
+    db: Session = Depends(get_db),
+    current_user: FuncionarioAuth = Depends(get_current_active_user)
+):
     """Retorna todos os clientes"""
     try:
         clientes = db.query(ClienteDB).all()
@@ -25,7 +31,11 @@ async def get_cliente(db: Session = Depends(get_db)):
         )
 
 @router.get("/cliente/{id_cliente}", response_model=ClienteResponse, tags=["Cliente"], status_code=status.HTTP_200_OK)
-async def get_cliente_id(id_cliente: int, db: Session = Depends(get_db)):
+async def get_cliente_id(
+    id_cliente: int,
+    db: Session = Depends(get_db),
+    current_user: FuncionarioAuth = Depends(get_current_active_user)
+):
     """Retorna um cliente específico pelo ID"""
     try:
         cliente = db.query(ClienteDB).filter(ClienteDB.id_cliente == id_cliente).first()
@@ -41,7 +51,11 @@ async def get_cliente_id(id_cliente: int, db: Session = Depends(get_db)):
         )
 
 @router.post("/cliente/", response_model=ClienteResponse, status_code=status.HTTP_201_CREATED, tags=["Cliente"])
-async def post_cliente(cliente_data: ClienteCreate, db: Session = Depends(get_db)):
+async def post_cliente(
+    cliente_data: ClienteCreate,
+    db: Session = Depends(get_db),
+    current_user: FuncionarioAuth = Depends(get_current_active_user)
+):
     """Cria um novo cliente"""
     try:
         existing_cliente = db.query(ClienteDB).filter(ClienteDB.cpf == cliente_data.cpf).first()
@@ -70,7 +84,12 @@ async def post_cliente(cliente_data: ClienteCreate, db: Session = Depends(get_db
         )
 
 @router.put("/cliente/{id_cliente}", response_model=ClienteResponse, tags=["Cliente"], status_code=status.HTTP_200_OK)
-async def put_cliente(id_cliente: int, cliente_data: ClienteUpdate, db: Session = Depends(get_db)):
+async def put_cliente(
+    id_cliente: int,
+    cliente_data: ClienteUpdate,
+    db: Session = Depends(get_db),
+    current_user: FuncionarioAuth = Depends(get_current_active_user)
+):
     """Atualiza um cliente existente"""
     try:
         cliente = db.query(ClienteDB).filter(ClienteDB.id_cliente == id_cliente).first()
@@ -91,7 +110,11 @@ async def put_cliente(id_cliente: int, cliente_data: ClienteUpdate, db: Session 
         )
 
 @router.delete("/cliente/{id_cliente}", tags=["Cliente"], status_code=status.HTTP_204_NO_CONTENT)
-async def delete_cliente(id_cliente: int, db: Session = Depends(get_db)):
+async def delete_cliente(
+    id_cliente: int,
+    db: Session = Depends(get_db),
+    current_user: FuncionarioAuth = Depends(get_current_active_user)
+):
     """Remove um cliente pelo ID"""
     try:
         cliente = db.query(ClienteDB).filter(ClienteDB.id_cliente == id_cliente).first()
