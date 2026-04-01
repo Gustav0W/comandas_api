@@ -10,7 +10,7 @@ from src.domain.schemas.ClienteSchema import (
 )
 from src.infra.orm.ClienteModel import ClienteDB
 from src.infra.database import get_db
-from src.infra.dependencies import get_current_active_user
+from src.infra.dependencies import get_current_active_user, require_group
 from src.domain.schemas.AuthSchema import FuncionarioAuth
 
 router = APIRouter()
@@ -54,7 +54,7 @@ async def get_cliente_id(
 async def post_cliente(
     cliente_data: ClienteCreate,
     db: Session = Depends(get_db),
-    current_user: FuncionarioAuth = Depends(get_current_active_user)
+    current_user: FuncionarioAuth = Depends(require_group([1, 3]))
 ):
     """Cria um novo cliente"""
     try:
@@ -88,7 +88,7 @@ async def put_cliente(
     id_cliente: int,
     cliente_data: ClienteUpdate,
     db: Session = Depends(get_db),
-    current_user: FuncionarioAuth = Depends(get_current_active_user)
+    current_user: FuncionarioAuth = Depends(require_group([1, 3]))
 ):
     """Atualiza um cliente existente"""
     try:
@@ -113,7 +113,7 @@ async def put_cliente(
 async def delete_cliente(
     id_cliente: int,
     db: Session = Depends(get_db),
-    current_user: FuncionarioAuth = Depends(get_current_active_user)
+    current_user: FuncionarioAuth = Depends(require_group([1]))
 ):
     """Remove um cliente pelo ID"""
     try:

@@ -23,7 +23,7 @@ router = APIRouter()
 @router.get("/funcionario/", response_model=List[FuncionarioResponse], tags=["Funcionário"], status_code=status.HTTP_200_OK)
 async def get_funcionario(
     db: Session = Depends(get_db),
-    current_user: FuncionarioAuth = Depends(get_current_active_user)
+    current_user: FuncionarioAuth = Depends(require_group([1]))
 ):
     """Retorna todos os funcionários"""
     try:

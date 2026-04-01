@@ -1,3 +1,16 @@
+@router.get("/produto-publico/", response_model=List[ProdutoResponse], tags=["Produto"])
+async def get_produto_publico(db: Session = Depends(get_db)):
+    """Retorna todos os produtos (rota pública, sem id e valor)"""
+    produtos = db.query(ProdutoDB).all()
+    # Remove id_produto e preco da resposta
+    produtos_publicos = []
+    for produto in produtos:
+        produto_dict = produto.__dict__.copy()
+        produto_dict.pop('_sa_instance_state', None)
+        produto_dict.pop('id_produto', None)
+        produto_dict.pop('preco', None)
+        produtos_publicos.append(produto_dict)
+    return produtos_publicos
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -54,7 +67,7 @@ async def get_produto_id(
 async def post_produto(
     produto_data: ProdutoCreate,
     db: Session = Depends(get_db),
-    current_user: FuncionarioAuth = Depends(get_current_active_user)
+    current_user: FuncionarioAuth = Depends(require_group([1]))
 ):
     """Cria um novo produto"""
     try:
@@ -81,7 +94,7 @@ async def put_produto(
     id_produto: int,
     produto_data: ProdutoUpdate,
     db: Session = Depends(get_db),
-    current_user: FuncionarioAuth = Depends(get_current_active_user)
+    current_user: FuncionarioAuth = Depends(require_group([1]))
 ):
     """Atualiza um produto existente"""
     try:
@@ -106,7 +119,7 @@ async def put_produto(
 async def delete_produto(
     id_produto: int,
     db: Session = Depends(get_db),
-    current_user: FuncionarioAuth = Depends(get_current_active_user)
+    current_user: FuncionarioAuth = Depends(require_group([1]))
 ):
     """Remove um produto pelo ID"""
     try:
