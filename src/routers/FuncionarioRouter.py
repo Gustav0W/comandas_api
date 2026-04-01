@@ -10,7 +10,7 @@ from src.domain.schemas.FuncionarioSchema import (
     FuncionarioResponse
 )
 
-from domain.schemas.AuthSchema import FuncionarioAuth
+from src.domain.schemas.AuthSchema import FuncionarioAuth
 
 #Infra
 from src.infra.orm.FuncionarioModel import FuncionarioDB
