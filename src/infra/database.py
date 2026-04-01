@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from src.settings import STR_DATABASE
+from settings import STR_DATABASE
 from sqlalchemy.orm import Session
 
 

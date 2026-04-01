@@ -3,7 +3,7 @@ from typing import Optional
 from jose import JWTError, jwt
 import bcrypt
 from fastapi import HTTPException, status
-from src.settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
+from settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
 
 def verify_password(plain_password: str, hashed_password: bytes) -> bool:
     """Verifica se a senha plain corresponde ao hash"""

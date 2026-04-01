@@ -1,22 +1,22 @@
-from src.infra.security import get_password_hash
+from infra.security import get_password_hash
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
 #Domain
-from src.domain.schemas.FuncionarioSchema import (   
+from domain.schemas.FuncionarioSchema import (   
     FuncionarioCreate, 
     FuncionarioUpdate, 
     FuncionarioResponse
 )
 
-from src.domain.schemas.AuthSchema import FuncionarioAuth
+from domain.schemas.AuthSchema import FuncionarioAuth
 
 #Infra
-from src.infra.orm.FuncionarioModel import FuncionarioDB
-from src.infra.database import get_db
-from src.infra.security import get_password_hash
-from src.infra.dependencies import get_current_active_user, require_group
+from infra.orm.FuncionarioModel import FuncionarioDB
+from infra.database import get_db
+from infra.security import get_password_hash
+from infra.dependencies import get_current_active_user, require_group
 
 router = APIRouter()
 

@@ -3,15 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
-from src.domain.schemas.ProdutoSchema import (
+from domain.schemas.ProdutoSchema import (
     ProdutoCreate,
     ProdutoUpdate,
     ProdutoResponse
 )
-from src.infra.orm.ProdutoModel import ProdutoDB
-from src.infra.database import get_db
-from src.infra.dependencies import get_current_active_user, require_group
-from src.domain.schemas.AuthSchema import FuncionarioAuth
+from infra.orm.ProdutoModel import ProdutoDB
+from infra.database import get_db
+from infra.dependencies import get_current_active_user, require_group
+from domain.schemas.AuthSchema import FuncionarioAuth
 
 router = APIRouter()
 

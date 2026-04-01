@@ -3,15 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from src.domain.schemas.ClienteSchema import (
+from domain.schemas.ClienteSchema import (
     ClienteCreate,
     ClienteUpdate,
     ClienteResponse
 )
-from src.infra.orm.ClienteModel import ClienteDB
-from src.infra.database import get_db
-from src.infra.dependencies import get_current_active_user, require_group
-from src.domain.schemas.AuthSchema import FuncionarioAuth
+from infra.orm.ClienteModel import ClienteDB
+from infra.database import get_db
+from infra.dependencies import get_current_active_user, require_group
+from domain.schemas.AuthSchema import FuncionarioAuth
 
 router = APIRouter()
 

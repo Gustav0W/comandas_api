@@ -1,4 +1,4 @@
-from src.infra import database
+from infra import database
 from sqlalchemy import BLOB, Column, VARCHAR, Integer, Float, BLOB
 
 class ProdutoDB(database.Base):

@@ -1,4 +1,4 @@
-from src.infra import database
+from infra import database
 from sqlalchemy import Column, VARCHAR, CHAR, Integer
 
 class ClienteDB(database.Base):
