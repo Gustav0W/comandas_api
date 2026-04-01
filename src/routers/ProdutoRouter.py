@@ -1,7 +1,8 @@
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-
+from pydantic import BaseModel
 from src.domain.schemas.ProdutoSchema import (
     ProdutoCreate,
     ProdutoUpdate,
@@ -14,36 +15,24 @@ from src.domain.schemas.AuthSchema import FuncionarioAuth
 
 router = APIRouter()
 
-# ROTA PÚBLICA DE PRODUTO
-@router.get("/produto-publico/", response_model=List[ProdutoResponse], tags=["Produto"])
+# Schema público para produto (sem id e preco)
+class ProdutoPublico(BaseModel):
+    nome: str
+    foto: str
+    descricao: str
+
+@router.get("/produto-publico/", response_model=List[ProdutoPublico], tags=["Produto"])
 async def get_produto_publico(db: Session = Depends(get_db)):
     """Retorna todos os produtos (rota pública, sem id e valor)"""
     produtos = db.query(ProdutoDB).all()
-    # Remove id_produto e preco da resposta
-    produtos_publicos = []
-    for produto in produtos:
-        produto_dict = produto.__dict__.copy()
-        produto_dict.pop('_sa_instance_state', None)
-        produto_dict.pop('id_produto', None)
-        produto_dict.pop('preco', None)
-        produtos_publicos.append(produto_dict)
+    produtos_publicos = [
+        ProdutoPublico(
+            nome=produto.nome,
+            foto=produto.foto,
+            descricao=produto.descricao
+        ) for produto in produtos
+    ]
     return produtos_publicos
-
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List
-
-from src.domain.schemas.ProdutoSchema import (
-    ProdutoCreate,
-    ProdutoUpdate,
-    ProdutoResponse
-)
-from src.infra.orm.ProdutoModel import ProdutoDB
-from src.infra.database import get_db
-from src.infra.dependencies import get_current_active_user
-from src.domain.schemas.AuthSchema import FuncionarioAuth
-
-router = APIRouter()
 
 @router.get("/produto/", response_model=List[ProdutoResponse], tags=["Produto"], status_code=status.HTTP_200_OK)
 async def get_produto(
