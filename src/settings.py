@@ -22,3 +22,8 @@ elif DB_SGDB == 'mssql': # SQL Server
     STR_DATABASE = f"mssql+pymssql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}?charset=utf8"
 else: # SQLite
     STR_DATABASE = f"sqlite:///apiDatabase.db"
+
+SECRET_KEY = os.getenv("SECRET_KEY", "d3b78b1492b4ff227b204df969df5df052e983ea0b99e418798fb5f9a2a9af45")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "15"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
