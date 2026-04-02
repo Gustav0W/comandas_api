@@ -20,6 +20,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan = lifespan)
 
+app.state.limiter = limiter
+
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+
 # Gustavo Vieira Walter
 @app.get("/", tags=["Root"], status_code=200)
 async def root():

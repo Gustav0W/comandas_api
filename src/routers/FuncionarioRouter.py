@@ -1,7 +1,8 @@
 from infra.security import get_password_hash
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List
+
 
 #Domain
 from domain.schemas.FuncionarioSchema import (   
@@ -17,10 +18,14 @@ from infra.orm.FuncionarioModel import FuncionarioDB
 from infra.database import get_db
 from infra.security import get_password_hash
 from infra.dependencies import get_current_active_user, require_group
+from infra.rate_limit import limiter, get_rate_limit
+
+from slowapi.errors import RateLimitExceeded
 
 router = APIRouter()
 
 @router.get("/funcionario/", response_model=List[FuncionarioResponse], tags=["Funcionário"], status_code=status.HTTP_200_OK)
+@limiter.limit(get_rate_limit("moderate"))
 async def get_funcionario(
     db: Session = Depends(get_db),
     current_user: FuncionarioAuth = Depends(require_group([1]))
@@ -147,6 +152,7 @@ async def put_funcionario(
         )
 
 @router.delete("/funcionario/{id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Funcionário"], summary="Remover funcionário")
+@limiter.limit(get_rate_limit("critical"))
 async def delete_funcionario(
     id: int, 
     db: Session = Depends(get_db),
