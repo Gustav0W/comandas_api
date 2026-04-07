@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
@@ -11,6 +11,8 @@ from domain.schemas.ProdutoSchema import (
 from infra.orm.ProdutoModel import ProdutoDB
 from infra.database import get_db
 from infra.dependencies import get_current_active_user, require_group
+from infra.rate_limit import limiter, get_rate_limit
+from services.AuditoriaService import AuditoriaService
 from domain.schemas.AuthSchema import FuncionarioAuth
 
 router = APIRouter()
@@ -70,7 +72,9 @@ async def get_produto_id(
         )
 
 @router.post("/produto/", response_model=ProdutoResponse, status_code=status.HTTP_201_CREATED, tags=["Produto"])
+@limiter.limit(get_rate_limit("restrictive"))
 async def post_produto(
+    request: Request,
     produto_data: ProdutoCreate,
     db: Session = Depends(get_db),
     current_user: FuncionarioAuth = Depends(require_group([1]))
@@ -87,6 +91,15 @@ async def post_produto(
         db.add(novo_produto)
         db.commit()
         db.refresh(novo_produto)
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="CREATE",
+            recurso="PRODUTO",
+            recurso_id=novo_produto.id_produto,
+            dados_novos=novo_produto,
+            request=request
+        )
         return novo_produto
     except Exception as e:
         db.rollback()
@@ -96,7 +109,9 @@ async def post_produto(
         )
 
 @router.put("/produto/{id_produto}", response_model=ProdutoResponse, tags=["Produto"], status_code=status.HTTP_200_OK)
+@limiter.limit(get_rate_limit("restrictive"))
 async def put_produto(
+    request: Request,
     id_produto: int,
     produto_data: ProdutoUpdate,
     db: Session = Depends(get_db),
@@ -107,10 +122,21 @@ async def put_produto(
         produto = db.query(ProdutoDB).filter(ProdutoDB.id_produto == id_produto).first()
         if not produto:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Produto não encontrado")
+        dados_antigos = produto.__class__(**produto.__dict__)
         for field, value in produto_data.model_dump(exclude_unset=True).items():
             setattr(produto, field, value)
         db.commit()
         db.refresh(produto)
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="UPDATE",
+            recurso="PRODUTO",
+            recurso_id=produto.id_produto,
+            dados_antigos=dados_antigos,
+            dados_novos=produto,
+            request=request
+        )
         return produto
     except HTTPException:
         raise
@@ -122,7 +148,9 @@ async def put_produto(
         )
 
 @router.delete("/produto/{id_produto}", tags=["Produto"], status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit(get_rate_limit("critical"))
 async def delete_produto(
+    request: Request,
     id_produto: int,
     db: Session = Depends(get_db),
     current_user: FuncionarioAuth = Depends(require_group([1]))
@@ -132,6 +160,15 @@ async def delete_produto(
         produto = db.query(ProdutoDB).filter(ProdutoDB.id_produto == id_produto).first()
         if not produto:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Produto não encontrado")
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="DELETE",
+            recurso="PRODUTO",
+            recurso_id=produto.id_produto,
+            dados_antigos=produto,
+            request=request
+        )
         db.delete(produto)
         db.commit()
         return None
