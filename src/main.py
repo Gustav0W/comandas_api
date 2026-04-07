@@ -5,7 +5,7 @@ from slowapi.errors import RateLimitExceeded
 import uvicorn
 
 #import das classes
-from routers import AuthRouter, FuncionarioRouter, ClienteRouter, ProdutoRouter, AuditoriaRouter
+from routers import AuthRouter, FuncionarioRouter, ClienteRouter, ProdutoRouter, AuditoriaRouter, HealthRouter
 
 from infra import database
 from contextlib import asynccontextmanager
@@ -34,6 +34,7 @@ app.include_router(AuthRouter.router)
 app.include_router(FuncionarioRouter.router)
 app.include_router(ClienteRouter.router)
 app.include_router(ProdutoRouter.router)
+app.include_router(HealthRouter.router)
 
 if __name__ == "__main__":
     uvicorn.run('main:app', host=HOST, port=int(PORT), reload=RELOAD)
