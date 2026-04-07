@@ -8,9 +8,11 @@ from infra.security import verify_password, create_access_token, create_refresh_
 from infra.dependencies import get_current_active_user
 from services.AuditoriaService import AuditoriaService
 from settings import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
+from infra.rate_limit import limiter, get_rate_limit
 router = APIRouter()
 
 @router.post("/auth/login", response_model=TokenResponse, tags=["Autenticação"], summary="Login de funcionário - pública - retorna access e refresh token")
+@limiter.limit(get_rate_limit("critical"))
 async def login(request: Request, login_data: LoginRequest, db: Session = Depends(get_db)):
     """
     Realiza login do funcionário e retorna access token e refresh token
