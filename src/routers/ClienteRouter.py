@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -11,6 +11,8 @@ from domain.schemas.ClienteSchema import (
 from infra.orm.ClienteModel import ClienteDB
 from infra.database import get_db
 from infra.dependencies import get_current_active_user, require_group
+from infra.rate_limit import limiter, get_rate_limit
+from services.AuditoriaService import AuditoriaService
 from domain.schemas.AuthSchema import FuncionarioAuth
 
 router = APIRouter()
@@ -51,7 +53,9 @@ async def get_cliente_id(
         )
 
 @router.post("/cliente/", response_model=ClienteResponse, status_code=status.HTTP_201_CREATED, tags=["Cliente"])
+@limiter.limit(get_rate_limit("restrictive"))
 async def post_cliente(
+    request: Request,
     cliente_data: ClienteCreate,
     db: Session = Depends(get_db),
     current_user: FuncionarioAuth = Depends(require_group([1, 3]))
@@ -73,6 +77,15 @@ async def post_cliente(
         db.add(novo_cliente)
         db.commit()
         db.refresh(novo_cliente)
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="CREATE",
+            recurso="CLIENTE",
+            recurso_id=novo_cliente.id_cliente,
+            dados_novos=novo_cliente,
+            request=request
+        )
         return novo_cliente
     except HTTPException:
         raise
@@ -84,7 +97,9 @@ async def post_cliente(
         )
 
 @router.put("/cliente/{id_cliente}", response_model=ClienteResponse, tags=["Cliente"], status_code=status.HTTP_200_OK)
+@limiter.limit(get_rate_limit("restrictive"))
 async def put_cliente(
+    request: Request,
     id_cliente: int,
     cliente_data: ClienteUpdate,
     db: Session = Depends(get_db),
@@ -95,10 +110,21 @@ async def put_cliente(
         cliente = db.query(ClienteDB).filter(ClienteDB.id_cliente == id_cliente).first()
         if not cliente:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cliente não encontrado")
+        dados_antigos = cliente.__class__(**cliente.__dict__)
         for field, value in cliente_data.model_dump(exclude_unset=True).items():
             setattr(cliente, field, value)
         db.commit()
         db.refresh(cliente)
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="UPDATE",
+            recurso="CLIENTE",
+            recurso_id=cliente.id_cliente,
+            dados_antigos=dados_antigos,
+            dados_novos=cliente,
+            request=request
+        )
         return cliente
     except HTTPException:
         raise
@@ -110,7 +136,9 @@ async def put_cliente(
         )
 
 @router.delete("/cliente/{id_cliente}", tags=["Cliente"], status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit(get_rate_limit("critical"))
 async def delete_cliente(
+    request: Request,
     id_cliente: int,
     db: Session = Depends(get_db),
     current_user: FuncionarioAuth = Depends(require_group([1]))
@@ -120,6 +148,15 @@ async def delete_cliente(
         cliente = db.query(ClienteDB).filter(ClienteDB.id_cliente == id_cliente).first()
         if not cliente:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cliente não encontrado")
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="DELETE",
+            recurso="CLIENTE",
+            recurso_id=cliente.id_cliente,
+            dados_antigos=cliente,
+            request=request
+        )
         db.delete(cliente)
         db.commit()
         return None
