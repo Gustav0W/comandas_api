@@ -1,7 +1,10 @@
+from httpx import request
+
 from infra.security import get_password_hash
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List
+from services.AuditoriaService import AuditoriaService
 
 
 #Domain
@@ -94,6 +97,17 @@ async def post_funcionario(
         db.commit()
         db.refresh(novo_funcionario)
 
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="CREATE",
+            recurso="FUNCIONARIO",
+            recurso_id=novo_funcionario.id,
+            dados_antigos=None,
+            dados_novos=novo_funcionario, # Objeto SQLAlchemy com dados novos
+            request=request # Request completo para capturar IP e user agent
+        )
+
         return novo_funcionario
 
     except HTTPException:
@@ -132,6 +146,8 @@ async def put_funcionario(
         if funcionario_data.senha:
             funcionario_data.senha = get_password_hash(funcionario_data.senha)
 
+        dados_antigos_obj = funcionario.__dict__.copy()
+
         # Atualiza apenas os campos fornecidos
         update_data = funcionario_data.model_dump(exclude_unset=True)
     
@@ -140,7 +156,16 @@ async def put_funcionario(
 
         db.commit()
         db.refresh(funcionario)
-
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="UPDATE",
+            recurso="FUNCIONARIO",
+            recurso_id=funcionario.id,
+            dados_antigos=dados_antigos_obj, # Objeto SQLAlchemy com dados antigos
+            dados_novos=funcionario, # Objeto SQLAlchemy com dados novos
+            request=request # Request completo para capturar IP e user agent
+        )
         return funcionario
 
     except HTTPException:
@@ -170,6 +195,17 @@ async def delete_funcionario(
         
         db.delete(funcionario)
         db.commit()
+
+        AuditoriaService.registrar_acao(
+            db=db,
+            funcionario_id=current_user.id,
+            acao="DELETE",
+            recurso="FUNCIONARIO",
+            recurso_id=funcionario.id,
+            dados_antigos=funcionario, # Objeto SQLAlchemy com dados antigos
+            dados_novos=None, # Sem dados novos, pois o registro foi deletado
+            request=request # Request completo para capturar IP e user agent
+        )
 
         return None
 

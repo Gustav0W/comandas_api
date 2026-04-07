@@ -5,7 +5,7 @@ from slowapi.errors import RateLimitExceeded
 import uvicorn
 
 #import das classes
-from routers import AuthRouter, FuncionarioRouter, ClienteRouter, ProdutoRouter
+from routers import AuthRouter, FuncionarioRouter, ClienteRouter, ProdutoRouter, AuditoriaRouter
 
 from infra import database
 from contextlib import asynccontextmanager
@@ -28,7 +28,8 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 @app.get("/", tags=["Root"], status_code=200)
 async def root():
     return {"detail":"API Pastelaria", "Swagger UI": "http://127.0.0.1:8000/docs", "ReDoc": "http://127.0.0.1:8000/redoc" }
-
+    
+app.include_router(AuditoriaRouter.router)
 app.include_router(AuthRouter.router)
 app.include_router(FuncionarioRouter.router)
 app.include_router(ClienteRouter.router)
