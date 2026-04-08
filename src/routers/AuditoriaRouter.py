@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from typing import List, Optional
 from datetime import datetime
-
+# Gustavo Vieira Walter
 from domain.schemas.AuditoriaSchema import AuditoriaResponse
 from domain.schemas.AuthSchema import FuncionarioAuth
 from infra.orm.AuditoriaModel import AuditoriaDB
