@@ -35,7 +35,7 @@ app.state.limiter = limiter
 
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
-# Gustavo Vieira Walter
+# Gustavo Vieira Walter 2
 @app.get("/", tags=["Root"], status_code=200)
 async def root():
     return {"detail":"API Pastelaria", "Swagger UI": "http://127.0.0.1:8000/docs", "ReDoc": "http://127.0.0.1:8000/redoc" }
