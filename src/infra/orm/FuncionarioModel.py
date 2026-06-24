@@ -1,5 +1,5 @@
 from infra import database
-from sqlalchemy import Column, VARCHAR, CHAR, Integer
+from sqlalchemy import Column, VARCHAR, CHAR, Integer, LargeBinary
 
 # ORM
 class FuncionarioDB(database.Base):
@@ -12,8 +12,9 @@ class FuncionarioDB(database.Base):
     telefone = Column(CHAR(11), nullable=False)
     grupo = Column(Integer, nullable=False)
     senha = Column(VARCHAR(200), nullable=False)
+    foto = Column(LargeBinary(length=(2**32)-1), nullable=True)
     
-    def __init__(self, id, nome, matricula, cpf, telefone, grupo, senha):
+    def __init__(self, id, nome, matricula, cpf, telefone, grupo, senha, foto=None):
         self.id = id
         self.nome = nome
         self.matricula = matricula
@@ -21,3 +22,4 @@ class FuncionarioDB(database.Base):
         self.telefone = telefone
         self.grupo = grupo
         self.senha = senha
+        self.foto = foto

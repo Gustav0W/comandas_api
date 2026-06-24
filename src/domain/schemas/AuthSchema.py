@@ -27,3 +27,4 @@ class FuncionarioAuth(BaseModel):
     matricula: str
     cpf: str
     grupo: int
+    foto: Optional[bytes] = None

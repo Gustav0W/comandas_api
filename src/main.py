@@ -6,13 +6,14 @@ from slowapi.errors import RateLimitExceeded
 import uvicorn
 
 #import das classes
-from routers import AuthRouter, FuncionarioRouter, ClienteRouter, ProdutoRouter, AuditoriaRouter, HealthRouter, ComandaRouter
+from routers import AuthRouter, FuncionarioRouter, ClienteRouter, ProdutoRouter, AuditoriaRouter, HealthRouter, ComandaRouter, RecebimentoRouter
 
 from infra import database
+from infra.orm import RecebimentoModel  # noqa: F401 — registra tabelas no metadata
 from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("API has started")
+    print("API has started...")
 
     await database.cria_tabelas()
     yield
@@ -46,6 +47,7 @@ app.include_router(FuncionarioRouter.router)
 app.include_router(ClienteRouter.router)
 app.include_router(ProdutoRouter.router)
 app.include_router(ComandaRouter.router)
+app.include_router(RecebimentoRouter.router)
 app.include_router(HealthRouter.router)
 
 if __name__ == "__main__":

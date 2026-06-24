@@ -148,7 +148,14 @@ async def create_comanda(
     await db.commit()
     await db.refresh(new_comanda)
     await AuditoriaService.registrar_acao_async(db=db, funcionario_id=current_user.id, acao="CREATE", recurso="COMANDA", recurso_id=new_comanda.id, dados_novos=new_comanda, request=request)
-    return new_comanda
+    result = await db.execute(
+        select(ComandaDB, FuncionarioDB, ClienteDB)
+        .outerjoin(FuncionarioDB, FuncionarioDB.id == ComandaDB.funcionario_id)
+        .outerjoin(ClienteDB, ClienteDB.id_cliente == ComandaDB.cliente_id)
+        .where(ComandaDB.id == new_comanda.id)
+    )
+    row = result.first()
+    return _build_comanda_response(*row) if row else new_comanda
 
 
 @router.put("/comanda/{id}", response_model=ComandaResponse, tags=["Comanda"], summary="Atualizar comanda")

@@ -8,6 +8,7 @@ class FuncionarioCreate(BaseModel):
     telefone: str
     grupo: int
     senha: str
+    foto: Optional[bytes] = None
 
 class FuncionarioUpdate(BaseModel):
     nome: Optional[str] = None
@@ -16,6 +17,7 @@ class FuncionarioUpdate(BaseModel):
     telefone: Optional[str] = None
     grupo: Optional[int] = None
     senha: Optional[str] = None
+    foto: Optional[bytes] = None
 
 class FuncionarioResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -25,4 +27,5 @@ class FuncionarioResponse(BaseModel):
     cpf: str
     telefone: str
     grupo: int
+    foto: Optional[bytes] = None
 #Gustavo Vieira Walter

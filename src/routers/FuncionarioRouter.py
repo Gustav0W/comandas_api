@@ -91,7 +91,8 @@ async def post_funcionario(
             cpf=funcionario_data.cpf,
             telefone=funcionario_data.telefone,
             grupo=funcionario_data.grupo,
-            senha=get_password_hash(funcionario_data.senha)
+            senha=get_password_hash(funcionario_data.senha),
+            foto=funcionario_data.foto
         )
 
         db.add(novo_funcionario)
